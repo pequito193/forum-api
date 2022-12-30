@@ -6,7 +6,8 @@ const PostSchema = new Schema({
     title: {type: String, required: true},
     content: {type: String, required: true},
     username: {type: String, required: true},
-    date: {type: String, required: true}
+    date: {type: String, required: true},
+    likes : {type: Number}
 });
 
 module.exports = mongoose.model('Posts', PostSchema);

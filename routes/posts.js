@@ -6,7 +6,7 @@ const User = require('./../models/user_model');
 const crypto = require('crypto');
 
 router.get('/', (req, res) => {
-    res.redirect('/list');
+    res.json({userStatus: ['logged in', 'not logged in']});
 })
 
 router.get('/list', (req, res) => {
@@ -36,13 +36,14 @@ router.get('/:id', (req, res) => {
     })
 })
 
-router.post('/create', (req, res) => {
+router.post('/new', (req, res) => {
     const post = new Post({
         id: crypto.randomBytes(32).toString('hex'),
         title: req.body.title,
         content: req.body.content,
         username: req.body.username,
-        date: new Date()
+        date: new Date(),
+        likes: 0
     })
     post.save((err) => {
         if (err) {
