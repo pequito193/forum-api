@@ -65,6 +65,7 @@ router.post('/login', (req, res) => {
         return;
       }
 
+      // Check password
       bcrypt.compare(requestPassword, user.password, (err, result) => {
         if (err) {
           return next(err);
@@ -73,8 +74,9 @@ router.post('/login', (req, res) => {
           res.json({message: 'Incorrect password!'});
           return;
         }
+
+        // Successfull login
         if (result) {
-          console.log('yay!')
           const user = {name: username};
           const accessToken = jwt.sign(user, process.env.SECRET_ACCESS_KEY);
           res.json({accessToken: accessToken});
