@@ -79,8 +79,7 @@ router.post('/login', (req, res) => {
         if (result) {
           const user = {name: username};
           const accessToken = jwt.sign(user, process.env.SECRET_ACCESS_KEY);
-          res.json({accessToken: accessToken});
-
+          res.json({accessToken});
         }
       })
     })

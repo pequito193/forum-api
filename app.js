@@ -31,6 +31,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', userRouter);
 app.use('/posts', postRouter);
 
+// app.get('*', (req, res) => {
+//   res.json({error: 'Bad request'});
+// })
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

@@ -4,9 +4,34 @@ const Post = require('./../models/post_model');
 const Comment = require('./../models/comment_model');
 const User = require('./../models/user_model');
 const crypto = require('crypto');
+const { nextTick } = require('process');
+const jwt = require('jsonwebtoken');
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (token == null) {
+        return res.sendStatus(401);
+    }
+
+    jwt.verify(token, process.env.SECRET_ACCESS_KEY, (err, user) => {
+        if (err) {
+            return res.sendStatus(403);
+        }
+        req.user = user;
+        next();
+    });
+    
+}
 
 router.get('/', (req, res) => {
-    res.json({userStatus: ['logged in', 'not logged in']});
+    Post.find({})
+    .exec(function(err, posts) {
+        if (err) {
+            res.json({error: err});
+        }
+        res.json({data: posts})
+    })
 })
 
 router.get('/list', (req, res) => {
@@ -36,7 +61,8 @@ router.get('/:id', (req, res) => {
     })
 })
 
-router.post('/new', (req, res) => {
+router.post('/new', authenticateToken, (req, res) => {
+    console.log(req.user);
     const post = new Post({
         id: crypto.randomBytes(32).toString('hex'),
         title: req.body.title,
