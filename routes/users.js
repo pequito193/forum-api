@@ -15,8 +15,7 @@ router.post('/signup', (req, res) => {
   };
 
   // Check if username already exists
-  User.countDocuments({username: req.body.username}, function(err, count) {
-    console.log(req.body.username, count)
+  User.countDocuments({username_lowercase: req.body.username.toLowerCase()}, function(err, count) {
     if (count > 0) {
       res.json({message: 'Username already taken!'});
       return;
@@ -32,6 +31,7 @@ router.post('/signup', (req, res) => {
         else {
             const user = new User({
                 username: req.body.username,
+                username_lowercase: req.body.username.toLowerCase(),
                 email: req.body.email,
                 password: hashedPassword
         })
@@ -41,7 +41,7 @@ router.post('/signup', (req, res) => {
             }
         })
         
-        res.end;
+        res.json({result: 'Success'});
 
       };
       });

@@ -4,12 +4,12 @@ const Post = require('./../models/post_model');
 const Comment = require('./../models/comment_model');
 const User = require('./../models/user_model');
 const crypto = require('crypto');
-const { nextTick } = require('process');
 const jwt = require('jsonwebtoken');
 
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
+    console.log(token);
     if (token == null) {
         return res.sendStatus(401);
     }
@@ -30,7 +30,7 @@ router.get('/', (req, res) => {
         if (err) {
             res.json({error: err});
         }
-        res.json({data: posts})
+        res.json({data: posts});
     })
 })
 
@@ -67,7 +67,7 @@ router.post('/new', authenticateToken, (req, res) => {
         id: crypto.randomBytes(32).toString('hex'),
         title: req.body.title,
         content: req.body.content,
-        username: req.body.username,
+        username: req.user,
         date: new Date(),
         likes: 0
     })
@@ -79,7 +79,11 @@ router.post('/new', authenticateToken, (req, res) => {
 })
 
 router.delete('/delete/:id', (req, res) => {
-    Post.findByIdAndDelete({})
+    Post.findByIdAndDelete({id: req.params.id}, (err) => {
+        if (err) {
+            return next(err);
+        }
+    })
 })
 
 module.exports = router;
