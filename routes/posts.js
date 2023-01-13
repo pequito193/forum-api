@@ -7,9 +7,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
 function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    console.log(token);
+    const token = req.body.jwt;
     if (token == null) {
         return res.sendStatus(401);
     }
@@ -62,12 +60,12 @@ router.get('/:id', (req, res) => {
 })
 
 router.post('/new', authenticateToken, (req, res) => {
-    console.log(req.user);
+    console.log(req.user.name);
     const post = new Post({
         id: crypto.randomBytes(32).toString('hex'),
         title: req.body.title,
         content: req.body.content,
-        username: req.user,
+        username: req.user.name,
         date: new Date(),
         likes: 0
     })
@@ -75,10 +73,11 @@ router.post('/new', authenticateToken, (req, res) => {
         if (err) {
             res.json({error: err});
         }
+        res.json({message: 'Success'});
     })
 })
 
-router.delete('/delete/:id', (req, res) => {
+router.delete('/delete/:id', authenticateToken, (req, res) => {
     Post.findByIdAndDelete({id: req.params.id}, (err) => {
         if (err) {
             return next(err);
