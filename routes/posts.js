@@ -32,16 +32,6 @@ router.get('/', (req, res) => {
     })
 })
 
-router.get('/list', (req, res) => {
-    Post.find({})
-    .exec(function(err, results) {
-        if (err) {
-            res.json({error: err});
-        }
-        res.json({data: results});
-    });
-})
-
 router.get('/:id', (req, res) => {
     Post.find({title: req.params.id})
     .exec(function(err, posts) {
@@ -60,7 +50,6 @@ router.get('/:id', (req, res) => {
 })
 
 router.post('/new', authenticateToken, (req, res) => {
-    console.log(req.user.name);
     const post = new Post({
         id: crypto.randomBytes(32).toString('hex'),
         title: req.body.title,
