@@ -17,8 +17,7 @@ function authenticateToken(req, res, next) {
         }
         req.user = user;
         next();
-    });
-    
+    });    
 }
 
 router.get('/', (req, res) => {
