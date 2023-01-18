@@ -20,24 +20,30 @@ function authenticateToken(req, res, next) {
     });    
 }
 
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
     Post.find({}).sort({date: -1})
     .exec(function(err, posts) {
         if (err) {
-            res.json({error: err});
+            return next(err);
         }
         res.json({data: posts});
     })
 })
 
-router.get('/:id', (req, res) => {
-    console.log(req.params.id)
+router.get('/:id', (req, res, next) => {
     Post.find({id: req.params.id})
     .exec(function(err, posts) {
         if (err) {
-            res.json({error: err});
+            return next(err);
         }
-        res.json({posts: posts});
+        Comment.find({postID: req.params.id}).sort({date: -1})
+        .exec(function(err, comments) {
+            if (err) {
+                return next(err);
+            }
+            res.json({posts: posts, comments: comments});
+            return;
+        })
     })
 })
 
