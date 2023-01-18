@@ -21,7 +21,7 @@ function authenticateToken(req, res, next) {
 }
 
 router.get('/', (req, res) => {
-    Post.find({})
+    Post.find({}).sort({date: -1})
     .exec(function(err, posts) {
         if (err) {
             res.json({error: err});
@@ -31,19 +31,13 @@ router.get('/', (req, res) => {
 })
 
 router.get('/:id', (req, res) => {
-    Post.find({title: req.params.id})
+    console.log(req.params.id)
+    Post.find({id: req.params.id})
     .exec(function(err, posts) {
         if (err) {
             res.json({error: err});
         }
-        Comment.find({postID: req.params.id //dont know yet
-    })
-        .exec(function(err, comments) {
-            if (err) {
-                res.json({error: err});
-            }
-            res.json({posts: posts, comments: comments});
-        })
+        res.json({posts: posts});
     })
 })
 

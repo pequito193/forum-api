@@ -4,7 +4,7 @@ const User = require('./../models/user_model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-router.post('/signup', (req, res) => {
+router.post('/signup', (req, res, next) => {
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
 
@@ -33,7 +33,8 @@ router.post('/signup', (req, res) => {
                 username: req.body.username,
                 username_lowercase: req.body.username.toLowerCase(),
                 email: req.body.email,
-                password: hashedPassword
+                password: hashedPassword,
+                date_created: new Date()
         })
         .save(err => {
             if (err) { 
