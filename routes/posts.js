@@ -32,7 +32,7 @@ router.get('/', (req, res, next) => {
 
 router.get('/:id', (req, res, next) => {
     Post.find({id: req.params.id})
-    .exec(function(err, posts) {
+    .exec(function(err, post) {
         if (err) {
             return next(err);
         }
@@ -41,7 +41,7 @@ router.get('/:id', (req, res, next) => {
             if (err) {
                 return next(err);
             }
-            res.json({posts: posts, comments: comments});
+            res.json({post: post, comments: comments});
             return;
         })
     })
