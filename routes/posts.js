@@ -54,7 +54,8 @@ router.post('/new', authenticateToken, (req, res) => {
         content: req.body.content,
         username: req.user.name,
         date: new Date(),
-        likes: 0
+        likes: 0,
+        liked_by: []
     })
     post.save((err) => {
         if (err) {
@@ -62,6 +63,26 @@ router.post('/new', authenticateToken, (req, res) => {
         }
         res.json({message: 'Success'});
     })
+})
+
+router.post('/likes/:id', authenticateToken, (req, res) => {
+    if (req.body.info === 'Like') {
+        Post.findOneAndUpdate({id: req.params.id}, {$inc: { likes: +1 }, $push: { liked_by: req.user.name }}, (err) => {
+            if (err) {
+                return next(err);
+            }
+            res.end;
+        });
+    } else if (req.body.info === 'Dislike') {
+        Post.findOneAndUpdate({id: req.params.id}, {$inc: { likes: -1 }, $pull: { liked_by: req.user.name }}, (err) => {
+            if (err) {
+                return next(err);
+            }
+            res.end;
+        });
+    } else {
+        res.json({error: 'Unknown request'});
+    }
 })
 
 router.delete('/delete/:id', authenticateToken, (req, res) => {
