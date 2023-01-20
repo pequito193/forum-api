@@ -34,7 +34,8 @@ router.post('/signup', (req, res, next) => {
                 username_lowercase: req.body.username.toLowerCase(),
                 email: req.body.email,
                 password: hashedPassword,
-                date_created: new Date()
+                date_created: new Date(),
+                posts_liked: []
         })
         .save(err => {
             if (err) { 
