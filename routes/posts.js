@@ -71,14 +71,14 @@ router.post('/likes/:id', authenticateToken, (req, res) => {
             if (err) {
                 return next(err);
             }
-            res.end;
+            res.json({message: 'Success'});
         });
     } else if (req.body.info === 'Dislike') {
         Post.findOneAndUpdate({id: req.params.id}, {$inc: { likes: -1 }, $pull: { liked_by: req.user.name }}, (err) => {
             if (err) {
                 return next(err);
             }
-            res.end;
+            res.json({message: 'Success'});
         });
     } else {
         res.json({error: 'Unknown request'});
