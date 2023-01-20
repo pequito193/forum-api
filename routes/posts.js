@@ -6,7 +6,8 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
 function authenticateToken(req, res, next) {
-    const token = req.body.jwt;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
     if (token == null) {
         return res.sendStatus(401);
     }
@@ -26,7 +27,17 @@ router.get('/', (req, res, next) => {
         if (err) {
             return next(err);
         }
-        res.json({data: posts});
+        res.json({posts: posts});
+    })
+})
+
+router.get('/users/:user', authenticateToken, (req, res, next) => {
+    Post.find({username: req.user.name}).sort({date: -1})
+    .exec(function(err, posts) {
+        if (err) {
+            return next(err);
+        }
+        res.json({posts: posts});
     })
 })
 
