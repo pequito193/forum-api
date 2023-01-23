@@ -8,6 +8,7 @@ var logger = require('morgan');
 
 var userRouter = require('./routes/users');
 var postRouter = require('./routes/posts');
+var commentRouter = require('./routes/comments');
 
 var app = express();
 
@@ -30,6 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/users', userRouter);
 app.use('/posts', postRouter);
+app.use('/comments', commentRouter);
 
 // app.get('*', (req, res) => {
 //   res.json({error: 'Bad request'});
