@@ -5,6 +5,7 @@ const Comment = require('./../models/comment_model');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
+// Checks if JWT sent to the server is correct
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -21,6 +22,9 @@ function authenticateToken(req, res, next) {
     });    
 }
 
+// -----------------------------------------------------------------------------------------------------
+
+// GET routes
 router.get('/', (req, res, next) => {
     Post.find({}).sort({date: -1})
     .exec(function(err, posts) {
@@ -58,6 +62,9 @@ router.get('/:id', (req, res, next) => {
     })
 })
 
+// -----------------------------------------------------------------------------------------------------
+
+// POST routes
 router.post('/new', authenticateToken, (req, res) => {
     const post = new Post({
         id: crypto.randomBytes(32).toString('hex'),
@@ -70,7 +77,7 @@ router.post('/new', authenticateToken, (req, res) => {
     })
     post.save((err) => {
         if (err) {
-            res.json({error: err});
+            return next(err);
         }
         res.json({message: 'Success'});
     })
@@ -94,6 +101,23 @@ router.post('/likes/:id', authenticateToken, (req, res) => {
     } else {
         res.json({error: 'Unknown request'});
     }
+})
+
+router.post('/comments/new', authenticateToken, (req, res) => {
+    const comment = new Comment({
+        postID: req.body.postID,
+        content: req.body.content,
+        username: req.user.name,
+        date: new Date(),
+        likes: 0,
+        liked_by: []
+    })
+    comment.save((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.json({message: 'Success'});
+    })
 })
 
 router.delete('/delete/:id', authenticateToken, (req, res) => {
