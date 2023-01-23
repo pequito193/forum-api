@@ -103,23 +103,6 @@ router.post('/likes/:id', authenticateToken, (req, res) => {
     }
 })
 
-router.post('/comments/new', authenticateToken, (req, res) => {
-    const comment = new Comment({
-        postID: req.body.postID,
-        content: req.body.content,
-        username: req.user.name,
-        date: new Date(),
-        likes: 0,
-        liked_by: []
-    })
-    comment.save((err) => {
-        if (err) {
-            return next(err);
-        }
-        res.json({message: 'Success'});
-    })
-})
-
 router.delete('/delete/:id', authenticateToken, (req, res) => {
     Post.findByIdAndDelete({id: req.params.id}, (err) => {
         if (err) {
