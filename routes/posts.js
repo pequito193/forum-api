@@ -25,7 +25,7 @@ function authenticateToken(req, res, next) {
 // -----------------------------------------------------------------------------------------------------
 
 // GET routes
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
     Post.find({}).sort({date: -1})
     .exec(function(err, posts) {
         if (err) {
@@ -35,7 +35,18 @@ router.get('/', (req, res, next) => {
     })
 })
 
-router.get('/users/:user', authenticateToken, (req, res, next) => {
+router.get('/search/:searchParams', (req, res) => {
+    const searching = req.params.searchParams.toLowerCase();
+    Post.find({$or: [{title: {$regex: new RegExp(searching, 'i')}}, {content: {$regex: new RegExp(searching, 'i')}}]}).sort({date: -1})
+    .exec(function(err, posts) {
+        if (err) {
+            return next(err);
+        }
+        res.json({message: 'Success', postsFound: posts});
+    })
+})
+
+router.get('/users/', authenticateToken, (req, res, next) => {
     Post.find({username: req.user.name}).sort({date: -1})
     .exec(function(err, posts) {
         if (err) {
@@ -103,7 +114,7 @@ router.post('/likes/:id', authenticateToken, (req, res) => {
     }
 })
 
-router.delete('/delete/:id', authenticateToken, (req, res) => {
+router.delete('/delete', authenticateToken, (req, res) => {
     Post.findByIdAndDelete({id: req.params.id}, (err) => {
         if (err) {
             return next(err);
