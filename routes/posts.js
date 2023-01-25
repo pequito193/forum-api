@@ -94,16 +94,16 @@ router.post('/new', authenticateToken, (req, res) => {
     })
 })
 
-router.post('/likes/:id', authenticateToken, (req, res) => {
+router.post('/likes/', authenticateToken, (req, res) => {
     if (req.body.info === 'Like') {
-        Post.findOneAndUpdate({id: req.params.id}, {$inc: { likes: +1 }, $push: { liked_by: req.user.name }}, (err) => {
+        Post.findOneAndUpdate({id: req.body.id}, {$inc: { likes: +1 }, $push: { liked_by: req.user.name }}, (err) => {
             if (err) {
                 return next(err);
             }
             res.json({message: 'Success'});
         });
     } else if (req.body.info === 'Dislike') {
-        Post.findOneAndUpdate({id: req.params.id}, {$inc: { likes: -1 }, $pull: { liked_by: req.user.name }}, (err) => {
+        Post.findOneAndUpdate({id: req.body.id}, {$inc: { likes: -1 }, $pull: { liked_by: req.user.name }}, (err) => {
             if (err) {
                 return next(err);
             }
