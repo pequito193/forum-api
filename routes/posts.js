@@ -25,7 +25,7 @@ function authenticateToken(req, res, next) {
 // -----------------------------------------------------------------------------------------------------
 
 // GET routes
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
     Post.find({}).sort({date: -1})
     .exec(function(err, posts) {
         if (err) {
@@ -35,7 +35,7 @@ router.get('/', (req, res) => {
     })
 })
 
-router.get('/search/:searchParams', (req, res) => {
+router.get('/search/:searchParams', (req, res, next) => {
     const searching = req.params.searchParams.toLowerCase();
     Post.find({$or: [{title: {$regex: new RegExp(searching, 'i')}}, {content: {$regex: new RegExp(searching, 'i')}}]}).sort({date: -1})
     .exec(function(err, posts) {
@@ -46,7 +46,7 @@ router.get('/search/:searchParams', (req, res) => {
     })
 })
 
-router.get('/users/', authenticateToken, (req, res, next) => {
+router.get('/users', authenticateToken, (req, res, next) => {
     Post.find({username: req.user.name}).sort({date: -1})
     .exec(function(err, posts) {
         if (err) {
@@ -76,7 +76,7 @@ router.get('/:id', (req, res, next) => {
 // -----------------------------------------------------------------------------------------------------
 
 // POST routes
-router.post('/new', authenticateToken, (req, res) => {
+router.post('/new', authenticateToken, (req, res, next) => {
     const post = new Post({
         id: crypto.randomBytes(32).toString('hex'),
         title: req.body.title,
@@ -94,7 +94,7 @@ router.post('/new', authenticateToken, (req, res) => {
     })
 })
 
-router.post('/likes/', authenticateToken, (req, res) => {
+router.post('/likes', authenticateToken, (req, res, next) => {
     if (req.body.info === 'Like') {
         Post.findOneAndUpdate({id: req.body.id}, {$inc: { likes: +1 }, $push: { liked_by: req.user.name }}, (err) => {
             if (err) {
@@ -114,11 +114,12 @@ router.post('/likes/', authenticateToken, (req, res) => {
     }
 })
 
-router.delete('/delete', authenticateToken, (req, res) => {
-    Post.findByIdAndDelete({id: req.params.id}, (err) => {
+router.delete('/delete/:id', authenticateToken, (req, res, next) => {
+    Post.findOneAndDelete({id: req.params.id}, (err) => {
         if (err) {
             return next(err);
         }
+        res.json({message: 'Success'});
     })
 })
 
