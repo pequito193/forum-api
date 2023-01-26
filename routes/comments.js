@@ -76,7 +76,6 @@ router.post('/likes', authenticateToken, (req, res) => {
 })
 
 router.post('/edit', authenticateToken, (req, res, next) => {
-    console.log(req.body)
     Comment.findOneAndUpdate({commentID: req.body.commentID}, {$set: {
         title: req.body.title,
         content: req.body.content

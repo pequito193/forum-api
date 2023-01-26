@@ -4,7 +4,6 @@ const Post = require('./../models/post_model');
 const Comment = require('./../models/comment_model');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { set } = require('mongoose');
 
 // Checks if JWT sent to the server is correct
 function authenticateToken(req, res, next) {
