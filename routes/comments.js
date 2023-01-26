@@ -42,16 +42,16 @@ router.post('/new', authenticateToken, (req, res) => {
     })
 })
 
-router.post('/likes/:id', authenticateToken, (req, res) => {
+router.post('/likes', authenticateToken, (req, res) => {
     if (req.body.info === 'Like') {
-        Comment.findOneAndUpdate({commentID: req.params.id}, {$inc: { likes: +1 }, $push: { liked_by: req.user.name }}, (err) => {
+        Comment.findOneAndUpdate({commentID: req.body.id}, {$inc: { likes: +1 }, $push: { liked_by: req.user.name }}, (err) => {
             if (err) {
                 return next(err);
             }
             res.json({message: 'Success'});
         });
     } else if (req.body.info === 'Dislike') {
-        Comment.findOneAndUpdate({commentID: req.params.id}, {$inc: { likes: -1 }, $pull: { liked_by: req.user.name }}, (err) => {
+        Comment.findOneAndUpdate({commentID: req.body.id}, {$inc: { likes: -1 }, $pull: { liked_by: req.user.name }}, (err) => {
             if (err) {
                 return next(err);
             }
@@ -60,6 +60,18 @@ router.post('/likes/:id', authenticateToken, (req, res) => {
     } else {
         res.json({error: 'Unknown request'});
     }
+})
+
+router.post('/edit', authenticateToken, (req, res, next) => {
+    Comment.findOneAndUpdate({commentID: req.body.id}, {$set: {
+        title: req.body.title,
+        content: req.body.content
+    }}, (err) => {
+        if (err) {
+            return next(err);
+        }
+        res.json({message: 'Success'});
+    })
 })
 
 module.exports = router;
