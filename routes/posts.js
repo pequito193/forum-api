@@ -4,6 +4,7 @@ const Post = require('./../models/post_model');
 const Comment = require('./../models/comment_model');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const { set } = require('mongoose');
 
 // Checks if JWT sent to the server is correct
 function authenticateToken(req, res, next) {
@@ -112,6 +113,18 @@ router.post('/likes', authenticateToken, (req, res, next) => {
     } else {
         res.json({error: 'Unknown request'});
     }
+})
+
+router.post('/edit', authenticateToken, (req, res, next) => {
+    Post.findOneAndUpdate({id: req.body.id}, {$set: {
+        title: req.body.title,
+        content: req.body.content
+    }}, (err) => {
+        if (err) {
+            return next(err);
+        }
+        res.json({message: 'Success'});
+    })
 })
 
 router.delete('/delete/:id', authenticateToken, (req, res, next) => {
