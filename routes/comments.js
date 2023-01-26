@@ -23,6 +23,19 @@ function authenticateToken(req, res, next) {
 
 // -----------------------------------------------------------------------------------------------------
 
+//GET routes
+router.get('/:id', (req, res, next) => {
+    Comment.find({commentID: req.params.id})
+    .exec(function(err, comment) {
+        if (err) {
+            return next(err);
+        }
+        res.json({comment: comment, postID: comment[0].postID});
+    })
+})
+
+// -----------------------------------------------------------------------------------------------------
+
 // POST routes
 router.post('/new', authenticateToken, (req, res) => {
     const comment = new Comment({
@@ -63,7 +76,8 @@ router.post('/likes', authenticateToken, (req, res) => {
 })
 
 router.post('/edit', authenticateToken, (req, res, next) => {
-    Comment.findOneAndUpdate({commentID: req.body.id}, {$set: {
+    console.log(req.body)
+    Comment.findOneAndUpdate({commentID: req.body.commentID}, {$set: {
         title: req.body.title,
         content: req.body.content
     }}, (err) => {

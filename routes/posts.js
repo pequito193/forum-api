@@ -69,7 +69,6 @@ router.get('/:id', (req, res, next) => {
                 return next(err);
             }
             res.json({post: post, comments: comments});
-            return;
         })
     })
 })
