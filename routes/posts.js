@@ -78,7 +78,7 @@ router.get('/:id', (req, res, next) => {
 // POST routes
 router.post('/new', authenticateToken, (req, res, next) => {
     const post = new Post({
-        id: crypto.randomBytes(32).toString('hex'),
+        id: crypto.randomBytes(16).toString('hex'),
         title: req.body.title,
         content: req.body.content,
         username: req.user.name,
@@ -119,7 +119,12 @@ router.delete('/delete/:id', authenticateToken, (req, res, next) => {
         if (err) {
             return next(err);
         }
-        res.json({message: 'Success'});
+        Comment.deleteMany({postID: req.params.id}, (err) => {
+            if (err) {
+                return next(err);
+            }
+            res.json({message: 'Success'});
+        })
     })
 })
 

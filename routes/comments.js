@@ -27,7 +27,7 @@ function authenticateToken(req, res, next) {
 router.post('/new', authenticateToken, (req, res) => {
     const comment = new Comment({
         postID: req.body.postID,
-        commentID: crypto.randomBytes(32).toString('hex'),
+        commentID: crypto.randomBytes(16).toString('hex'),
         content: req.body.content,
         username: req.user.name,
         date: new Date(),
