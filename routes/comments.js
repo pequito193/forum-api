@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
+    console.log(token)
     if (token == null) {
         return res.sendStatus(401);
     }
@@ -80,6 +81,16 @@ router.post('/edit', authenticateToken, (req, res, next) => {
         title: req.body.title,
         content: req.body.content
     }}, (err) => {
+        if (err) {
+            return next(err);
+        }
+        res.json({message: 'Success'});
+    })
+})
+
+router.post('/delete', authenticateToken, (req, res, next) => {
+    console.log(req.body.commentID)
+    Comment.findOneAndDelete({commentID: req.body.commentID}, (err) => {
         if (err) {
             return next(err);
         }

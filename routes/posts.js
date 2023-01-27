@@ -125,12 +125,12 @@ router.post('/edit', authenticateToken, (req, res, next) => {
     })
 })
 
-router.delete('/delete/:id', authenticateToken, (req, res, next) => {
-    Post.findOneAndDelete({id: req.params.id}, (err) => {
+router.post('/delete', authenticateToken, (req, res, next) => {
+    Post.findOneAndDelete({id: req.body.id}, (err) => {
         if (err) {
             return next(err);
         }
-        Comment.deleteMany({postID: req.params.id}, (err) => {
+        Comment.deleteMany({postID: req.body.id}, (err) => {
             if (err) {
                 return next(err);
             }
