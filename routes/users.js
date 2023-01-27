@@ -80,7 +80,7 @@ router.post('/login', (req, res, next) => {
     })
 })
 
-router.post('delete', (req, res, next) => {
+router.post('/delete', (req, res, next) => {
   User.findOneAndDelete({username: req.body.username}, (err) => {
     if (err) {
         return next(err);

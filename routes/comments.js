@@ -8,7 +8,6 @@ const jwt = require('jsonwebtoken');
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    console.log(token)
     if (token == null) {
         return res.sendStatus(401);
     }
@@ -89,11 +88,20 @@ router.post('/edit', authenticateToken, (req, res, next) => {
 })
 
 router.post('/delete', authenticateToken, (req, res, next) => {
-    Comment.findOneAndDelete({commentID: req.body.commentID}, (err) => {
+    Comment.find({commentID: req.body.commentID}, (err, comment) => {
         if (err) {
             return next(err);
         }
-        res.json({message: 'Success'});
+
+        // Simple security check to verify whether the user deleting the comment is the one who created it
+        if (req.user.name === comment[0].username) {
+            Comment.findOneAndDelete({commentID: req.body.commentID}, (err) => {
+                if (err) {
+                    return next(err);
+                }
+                res.json({message: 'Success'});
+            })
+        }
     })
 })
 
