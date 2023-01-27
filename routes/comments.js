@@ -89,7 +89,6 @@ router.post('/edit', authenticateToken, (req, res, next) => {
 })
 
 router.post('/delete', authenticateToken, (req, res, next) => {
-    console.log(req.body.commentID)
     Comment.findOneAndDelete({commentID: req.body.commentID}, (err) => {
         if (err) {
             return next(err);

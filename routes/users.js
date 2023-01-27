@@ -11,14 +11,12 @@ router.post('/signup', (req, res, next) => {
   // Check if password fields match
   if (!(password === confirmPassword)) {
     res.json({message: 'Passwords do not match!'});
-    return;
   };
 
   // Check if username already exists
   User.countDocuments({username_lowercase: req.body.username.toLowerCase()}, function(err, count) {
     if (count > 0) {
       res.json({message: 'Username already taken!'});
-      return;
     }
 
     else {
@@ -29,30 +27,27 @@ router.post('/signup', (req, res, next) => {
         }
 
         else {
-            const user = new User({
-                username: req.body.username,
-                username_lowercase: req.body.username.toLowerCase(),
-                email: req.body.email,
-                password: hashedPassword,
-                date_created: new Date(),
-                posts_liked: []
-        })
-        .save(err => {
+          const user = new User({
+            username: req.body.username,
+            username_lowercase: req.body.username.toLowerCase(),
+            email: req.body.email,
+            password: hashedPassword,
+            date_created: new Date(),
+            posts_liked: []
+          })
+          .save(err => {
             if (err) { 
                 return next(err);
             }
-        })
-        
-        res.json({result: 'Success'});
-
-      };
+          })
+          res.json({result: 'Success'});
+        };
       });
     }
   });
-
 })
 
-router.post('/login', (req, res) => {
+router.post('/login', (req, res, next) => {
     const username = req.body.username;
     const requestPassword = req.body.password;
     
@@ -64,7 +59,6 @@ router.post('/login', (req, res) => {
 
       if (!user) {
         res.json({message: 'User not found!'});
-        return;
       }
 
       // Check password
@@ -74,7 +68,6 @@ router.post('/login', (req, res) => {
         }
         if (!result) {
           res.json({message: 'Incorrect password!'});
-          return;
         }
 
         // Successfull login
@@ -85,6 +78,15 @@ router.post('/login', (req, res) => {
         }
       })
     })
+})
+
+router.post('delete', (req, res, next) => {
+  User.findOneAndDelete({username: req.body.username}, (err) => {
+    if (err) {
+        return next(err);
+    }
+    res.json({message: 'Success'});
+  })
 })
 
 module.exports = router;
